@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Place Order - E-Commerce Store{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-shopping-cart"></i> Place Order</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Product Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <h4>{{ product[1] }}</h4>
+                                <p class="text-muted">{{ product[2] }}</p>
+                                <p class="h3 text-primary">${{ "%.2f"|format(product[3]) }}</p>
+                                <p>
+                                    <span class="badge {% if product[4] > 10 %}bg-success{% elif product[4] > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ product[4] }} in stock
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Order Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST">
+                                    <div class="mb-3">
+                                        <label for="quantity" class="form-label">Quantity</label>
+                                        <input type="number" class="form-control" id="quantity" name="quantity" 
+                                               min="1" max="{{ product[4] }}" value="1" required>
+                                        <div class="form-text">Maximum available: {{ product[4] }}</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Total Amount</label>
+                                        <p class="h4 text-success" id="totalAmount">
+                                            ${{ "%.2f"|format(product[3]) }}
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-success btn-lg">
+                                            <i class="fas fa-credit-card"></i> Confirm Order
+                                        </button>
+                                        <a href="{{ url_for('products.products') }}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-arrow-left"></i> Continue Shopping
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('quantity').addEventListener('input', function() {
+        const quantity = parseInt(this.value) || 0;
+        const price = {{ product[3] }};
+        const total = quantity * price;
+        document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
+    });
+</script>
+{% endblock %}
